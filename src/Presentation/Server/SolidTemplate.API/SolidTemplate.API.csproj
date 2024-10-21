@@ -7,15 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
+    <PackageReference Include="Swashbuckle.AspNetCore"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
+    <Folder Include="Middleware\"/>
+    <Folder Include="Models\"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj" />
+    <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj"/>
+    <ProjectReference Include="..\..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
   </ItemGroup>
 
 </Project>
