@@ -11,19 +11,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{58C658A6-3836-4DB7-AB64-6FD38D6600C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSTemplate.Domain", "src\Application\TSTemplate.Domain\TSTemplate.Domain.csproj", "{D2118C70-7F06-4C97-8E48-C472A7190B31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidTemplate.Domain", "src\Application\SolidTemplate.Domain\SolidTemplate.Domain.csproj", "{D2118C70-7F06-4C97-8E48-C472A7190B31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSTemplate.Application", "src\Application\TSTemplate.Application\TSTemplate.Application.csproj", "{14008D8D-3858-4B26-A234-CE07661A0B18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidTemplate.Application", "src\Application\SolidTemplate.Application\SolidTemplate.Application.csproj", "{14008D8D-3858-4B26-A234-CE07661A0B18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSTemplate.Infrastructure", "src\Infrastructure\TSTemplate.Infrastructure\TSTemplate.Infrastructure.csproj", "{672637AD-C4A7-4AF1-AFE9-6BB03460164C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidTemplate.Infrastructure", "src\Infrastructure\SolidTemplate.Infrastructure\SolidTemplate.Infrastructure.csproj", "{672637AD-C4A7-4AF1-AFE9-6BB03460164C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSTemplate.Persistence", "src\Infrastructure\TSTemplate.Persistence\TSTemplate.Persistence.csproj", "{4ED6E77D-0573-4748-BC59-898A425F15F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidTemplate.Persistence", "src\Infrastructure\SolidTemplate.Persistence\SolidTemplate.Persistence.csproj", "{4ED6E77D-0573-4748-BC59-898A425F15F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{72C3CFDF-2FC7-4850-9C63-29FA9429E376}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{73352664-2995-42BA-8A77-B9583C57CA5E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSTemplate.API", "src\Presentation\Server\TSTemplate.API\TSTemplate.API.csproj", "{BFC467CC-7F4E-456A-88C5-28709DFF8D09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidTemplate.API", "src\Presentation\Server\SolidTemplate.API\SolidTemplate.API.csproj", "{BFC467CC-7F4E-456A-88C5-28709DFF8D09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{21785516-2EAE-408D-901D-0AC74CDB6BA9}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,9 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossCuttingConcerns", "CrossCuttingConcerns", "{915B80C8-D4FD-4A3B-8CFE-0D40828F9C51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSTemplate.CrossCuttingConcerns", "src\CrossCuttingConcerns\TSTemplate.CrossCuttingConcerns\TSTemplate.CrossCuttingConcerns.csproj", "{939577BB-F531-4E73-998B-5255197AAD9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidTemplate.CrossCuttingConcerns", "src\CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns.csproj", "{939577BB-F531-4E73-998B-5255197AAD9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSTemplate.Constants", "src\CrossCuttingConcerns\TSTemplate.Constants\TSTemplate.Constants.csproj", "{7EA48792-EF0E-4A34-B466-0C995EDC2CD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidTemplate.Constants", "src\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj", "{7EA48792-EF0E-4A34-B466-0C995EDC2CD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

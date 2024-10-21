@@ -1,4 +1,4 @@
-namespace TSTemplate.API
+namespace SolidTemplate.API
 {
     public class WeatherForecast
     {

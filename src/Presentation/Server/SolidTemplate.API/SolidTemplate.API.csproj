@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\TSTemplate.Application\TSTemplate.Application.csproj" />
+    <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj" />
   </ItemGroup>
 
 </Project>
