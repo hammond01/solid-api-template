@@ -1,3 +1,4 @@
+using SolidTemplate.CrossCuttingConcerns.Permission;
 namespace SolidTemplate.API.Controllers;
 
 [ApiController]
@@ -17,4 +18,12 @@ public class WeatherForecastController : ControllerBase
             Summary = _summaries[Random.Shared.Next(_summaries.Length)]
         })
         .ToArray();
+
+
+    [HttpGet]
+    [Authorize(Permissions.User.Read)]
+    public IActionResult GetItems() => Ok(new
+    {
+        message = "Danh sách Item."
+    });
 }

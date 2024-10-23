@@ -6,7 +6,6 @@ public class PermissionRequirement : IAuthorizationRequirement
     {
         Permission = permission;
     }
-
     public string Permission { get; set; }
 }
 public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequirement>, IAuthorizationRequirement

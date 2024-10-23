@@ -6,6 +6,7 @@ public class IdentityConfig
     public static string ConfigName => "IdentityConfig";
     public string ISSUER { get; set; } = null!;
     public string AUDIENCE { get; set; } = null!;
+    public string SECRET { get; set; } = null!;
     public TimeSpan BEARER_TOKEN_EXPIRATION { get; set; }
     public string BEARER_TOKEN_EXPIRATION_COMMENT { get; set; } = null!;
     public TimeSpan REFRESH_TOKEN_EXPIRATION { get; set; }
