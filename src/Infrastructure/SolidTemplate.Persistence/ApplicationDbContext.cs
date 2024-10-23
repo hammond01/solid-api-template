@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SolidTemplate.Domain.DataModels;
 namespace SolidTemplate.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -34,6 +34,7 @@ public class ApplicationDbContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.Property(e => e.CustomerId).IsFixedLength();

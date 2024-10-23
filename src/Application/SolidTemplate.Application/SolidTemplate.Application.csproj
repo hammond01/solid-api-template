@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\SolidTemplate.Infrastructure\SolidTemplate.Infrastructure.csproj"/>
-    <ProjectReference Include="..\..\Infrastructure\SolidTemplate.Persistence\SolidTemplate.Persistence.csproj"/>
     <ProjectReference Include="..\SolidTemplate.Domain\SolidTemplate.Domain.csproj"/>
   </ItemGroup>
 

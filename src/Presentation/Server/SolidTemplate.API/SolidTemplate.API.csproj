@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,13 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\"/>
-    <Folder Include="Models\"/>
+    <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj"/>
+    <ProjectReference Include="..\..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
+    <ProjectReference Include="..\..\..\Infrastructure\SolidTemplate.Persistence\SolidTemplate.Persistence.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj"/>
-    <ProjectReference Include="..\..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
+    <Folder Include="Middleware\"/>
   </ItemGroup>
 
 </Project>

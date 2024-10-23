@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj"/>
     <ProjectReference Include="..\..\Application\SolidTemplate.Domain\SolidTemplate.Domain.csproj"/>
+    <ProjectReference Include="..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
+    <ProjectReference Include="..\SolidTemplate.Infrastructure\SolidTemplate.Infrastructure.csproj"/>
   </ItemGroup>
 
 </Project>

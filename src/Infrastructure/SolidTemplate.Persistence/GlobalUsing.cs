@@ -1,0 +1,11 @@
+﻿global using static Microsoft.AspNetCore.Http.StatusCodes;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.Extensions.Logging;
+global using SolidTemplate.Domain.Common;
+global using SolidTemplate.Domain.DataModels;
+global using SolidTemplate.Domain.Model;
+global using SolidTemplate.Infrastructure.Storage;
+global using SolidTemplate.Persistence.Managers;
+global using System.Security.Claims;
+global using Microsoft.EntityFrameworkCore;
+global using SolidTemplate.Constants.AuthorizationDefinitions;

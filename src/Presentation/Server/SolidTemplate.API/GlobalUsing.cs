@@ -1,3 +1,12 @@
 ﻿global using SolidTemplate.Application;
 global using SolidTemplate.Constants.ConfigurationOptions;
+global using static Microsoft.AspNetCore.Http.StatusCodes;
+global using System.Text;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.IdentityModel.Tokens;
+global using SolidTemplate.API.Permission;
+global using SolidTemplate.Constants.AuthorizationDefinitions;
+global using SolidTemplate.Domain.DataModels;
+global using SolidTemplate.Infrastructure.Storage;
 global using SolidTemplate.Persistence;

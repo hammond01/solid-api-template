@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolidTemplate.Domain.DTOs.CategoryDto;
+using SolidTemplate.Persistence;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]")]
@@ -15,6 +16,7 @@ public class CategoryController : ControllerBase
         _context = context;
         _mapper = mapper;
     }
+    // [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetCategoryDto>>> GetCategories()
     {

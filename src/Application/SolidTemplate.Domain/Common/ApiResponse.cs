@@ -22,7 +22,7 @@ public class ApiResponse : ApiResponse<object>
     {
     }
 
-    public ApiResponse(int statusCode, string message)
+    public ApiResponse(int statusCode, string message = "")
     {
         StatusCode = statusCode;
         Message = message;

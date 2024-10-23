@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SolidTemplate.Application.Managers;
 namespace SolidTemplate.Persistence;
 
 public static class PersistenceConfiguration
@@ -14,12 +14,12 @@ public static class PersistenceConfiguration
                     sql.MigrationsAssembly(migrationsAssembly);
                 }
             }))
-            .AddDbContextFactory<ApplicationDbContext>((Action<DbContextOptionsBuilder>)null!, ServiceLifetime.Scoped)
-            .AddRepositories();
+            .AddDbContextFactory<ApplicationDbContext>((Action<DbContextOptionsBuilder>)null!, ServiceLifetime.Scoped);
+
+        services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+        services.AddScoped<IAccountManager, AccountManager>();
+        services.AddScoped<IAdminManager, AdminManager>();
+
         return services;
     }
-    private static IServiceCollection AddRepositories(this IServiceCollection services) =>
-        // services
-        //     .AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
-        services;
 }
