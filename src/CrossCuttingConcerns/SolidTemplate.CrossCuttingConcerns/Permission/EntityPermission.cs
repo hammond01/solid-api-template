@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.API.Permission;
+﻿namespace SolidTemplate.CrossCuttingConcerns.Permission;
 
 public class EntityPermission
 {

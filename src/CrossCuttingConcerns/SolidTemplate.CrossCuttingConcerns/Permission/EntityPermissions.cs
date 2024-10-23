@@ -1,12 +1,8 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-namespace SolidTemplate.API.Permission;
+namespace SolidTemplate.CrossCuttingConcerns.Permission;
 
 public class EntityPermissions
 {
     private static readonly ReadOnlyCollection<EntityPermission> _allPermissions;
-
     /// <summary>
     ///     Static constructor that generates application permissions based on constant values defined in nested classes.
     /// </summary>

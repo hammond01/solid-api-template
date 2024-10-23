@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SolidTemplate.Application.Managers;
+﻿using SolidTemplate.CrossCuttingConcerns.Permission;
 namespace SolidTemplate.Persistence;
 
 public static class PersistenceConfiguration
@@ -19,6 +18,8 @@ public static class PersistenceConfiguration
         services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
         services.AddScoped<IAccountManager, AccountManager>();
         services.AddScoped<IAdminManager, AdminManager>();
+
+        services.AddScoped<EntityPermissions>();
 
         return services;
     }

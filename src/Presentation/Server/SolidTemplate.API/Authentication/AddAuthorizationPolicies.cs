@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.API.Permission;
+﻿namespace SolidTemplate.API.Authentication;
 
 public static class AddAuthorizationPolicies
 {

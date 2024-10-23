@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-namespace SolidTemplate.API.Permission;
+﻿namespace SolidTemplate.CrossCuttingConcerns.Permission;
 
 public static class Permissions
 {
@@ -32,21 +31,6 @@ public static class Permissions
 
         [Display(Name = "DeleteRolePermission")]
         public const string Delete = "Role.Delete";
-    }
-
-    public static class Tenant
-    {
-        [Display(Name = "CreateTenantPermission")]
-        public const string Create = "Tenant.Create";
-
-        [Display(Name = "UpdateTenantPermission")]
-        public const string Update = "Tenant.Update";
-
-        [Display(Name = "ReadTenantPermission")]
-        public const string Read = "Tenant.Read";
-
-        [Display(Name = "DeleteTenantPermission")]
-        public const string Delete = "Tenant.Delete";
     }
     #endregion
 }

@@ -1,17 +1,21 @@
-﻿namespace SolidTemplate.Persistence;
+﻿using SolidTemplate.CrossCuttingConcerns.Permission;
+namespace SolidTemplate.Persistence;
 
 public class DatabaseInitializer : IDatabaseInitializer
 {
     private readonly ApplicationDbContext _context;
+    private readonly EntityPermissions _entityPermissions;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
 
+
     public DatabaseInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager, EntityPermissions entityPermissions)
     {
         _context = context;
         _userManager = userManager;
         _roleManager = roleManager;
+        _entityPermissions = entityPermissions;
     }
     public async Task SeedAsync()
     {
@@ -32,24 +36,23 @@ public class DatabaseInitializer : IDatabaseInitializer
         });
 
         var adminRole = await _roleManager.FindByNameAsync(DefaultRoleNames.Administrator);
-
+        var allClaims = _entityPermissions.GetAllPermissionValues().Distinct();
         var roleClaims = (await _roleManager.GetClaimsAsync(adminRole!)).Select(c => c.Value).ToList();
 
-        string[] claimsToAdd =
-        [
-            ApplicationClaimTypes.Permission
-        ];
-
-        foreach (var claim in claimsToAdd.Except(roleClaims))
+        var enumerable = allClaims as String[] ?? allClaims.ToArray();
+        var newClaims = enumerable.Except(roleClaims);
+        foreach (var claim in newClaims)
         {
-            await _roleManager.AddClaimAsync(adminRole!, new Claim(claim, "true"));
+            await _roleManager.AddClaimAsync(adminRole!, new Claim(ApplicationClaimTypes.Permission, claim));
         }
-
-        var deprecatedClaims = roleClaims.Except(claimsToAdd);
-
+        var roles = await _roleManager.Roles.ToListAsync();
+        var deprecatedClaims = roleClaims.Except(enumerable);
         foreach (var claim in deprecatedClaims)
         {
-            await _roleManager.RemoveClaimAsync(adminRole!, new Claim(claim, "true"));
+            foreach (var role in roles)
+            {
+                await _roleManager.RemoveClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, claim));
+            }
         }
     }
 

@@ -9,3 +9,5 @@ global using SolidTemplate.Persistence.Managers;
 global using System.Security.Claims;
 global using Microsoft.EntityFrameworkCore;
 global using SolidTemplate.Constants.AuthorizationDefinitions;
+global using Microsoft.Extensions.DependencyInjection;
+global using SolidTemplate.Application.Managers;

@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.API.Permission;
+﻿namespace SolidTemplate.CrossCuttingConcerns.Permission;
 
 [Flags]
 public enum Actions

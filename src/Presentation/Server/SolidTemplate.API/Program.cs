@@ -22,6 +22,7 @@ public class Program
 
         // Register infrastructure services
         builder.Services.AddDateTimeProvider();
+        builder.Services.AddInfrastructure();
 
         // Register Identity
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
