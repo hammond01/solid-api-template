@@ -1,7 +1,6 @@
-﻿namespace SolidTemplate.Constants.AuthorizationDefinitions
+﻿namespace SolidTemplate.Constants.AuthorizationDefinitions;
+
+public static class DefaultRoleNames
 {
-    public static class DefaultRoleNames
-    {
-        public const string Administrator = "Administrator";
-    }
+    public const string Administrator = "Administrator";
 }
