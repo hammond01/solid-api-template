@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using SolidTemplate.Application.Managers;
-using SolidTemplate.Domain.DTOs.UserDto;
-namespace SolidTemplate.Persistence.Managers;
+﻿namespace SolidTemplate.Persistence.Managers;
 
 public class AccountManager : IAccountManager
 {

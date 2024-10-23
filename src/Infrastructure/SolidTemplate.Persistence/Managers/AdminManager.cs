@@ -1,6 +1,4 @@
-﻿using SolidTemplate.Application.Managers;
-using SolidTemplate.Domain.DTOs.AdminDto;
-namespace SolidTemplate.Persistence.Managers;
+﻿namespace SolidTemplate.Persistence.Managers;
 
 public class AdminManager : IAdminManager
 {

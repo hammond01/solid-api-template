@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using SolidTemplate.Application.Managers;
-using SolidTemplate.Domain.Common;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]")]

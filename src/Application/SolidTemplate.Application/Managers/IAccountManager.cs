@@ -1,5 +1,4 @@
-﻿using SolidTemplate.Domain.DTOs.UserDto;
-namespace SolidTemplate.Application.Managers;
+﻿namespace SolidTemplate.Application.Managers;
 
 public interface IAccountManager
 {

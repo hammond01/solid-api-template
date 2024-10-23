@@ -11,3 +11,8 @@ global using SolidTemplate.Infrastructure.Storage;
 global using SolidTemplate.Persistence;
 global using SolidTemplate.API.Authentication;
 global using SolidTemplate.Infrastructure;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using SolidTemplate.Application.Managers;
+global using SolidTemplate.Domain.Common;
+global using SolidTemplate.Domain.DTOs.UserDto;

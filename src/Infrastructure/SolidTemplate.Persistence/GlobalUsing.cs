@@ -11,3 +11,8 @@ global using Microsoft.EntityFrameworkCore;
 global using SolidTemplate.Constants.AuthorizationDefinitions;
 global using Microsoft.Extensions.DependencyInjection;
 global using SolidTemplate.Application.Managers;
+global using Microsoft.Extensions.Configuration;
+global using SolidTemplate.Domain.DTOs.UserDto;
+global using SolidTemplate.Domain.DTOs.AdminDto;
+global using SolidTemplate.CrossCuttingConcerns.Permission;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

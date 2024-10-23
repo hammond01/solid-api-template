@@ -1,5 +1,4 @@
-﻿using SolidTemplate.CrossCuttingConcerns.Permission;
-namespace SolidTemplate.Persistence;
+﻿namespace SolidTemplate.Persistence;
 
 public class DatabaseInitializer : IDatabaseInitializer
 {

@@ -1,8 +1,6 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolidTemplate.Domain.DTOs.CategoryDto;
-using SolidTemplate.Persistence;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]")]
