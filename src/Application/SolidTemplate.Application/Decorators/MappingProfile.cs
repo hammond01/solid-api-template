@@ -6,5 +6,6 @@ public class MappingProfile : Profile
     {
         CreateMap<GetCategoryDto, Category>().ReverseMap();
         CreateMap<CreateCategoryDto, Category>().ReverseMap();
+        CreateMap<UserDto, ApplicationUser>().ReverseMap();
     }
 }

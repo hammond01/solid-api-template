@@ -5,15 +5,12 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         // Add services to the container.
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddCors(options
             => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-        builder.Services.RegisterPolicy();
         builder.Services.ApplicationConfigureServices();
         builder.Services.AddPersistence(builder.Configuration.GetConnectionString("SQL")!);
 
@@ -59,7 +56,6 @@ public class Program
             options.Password.RequireNonAlphanumeric = PasswordPolicy.RequireNonAlphanumeric;
             options.Password.RequireUppercase = PasswordPolicy.RequireUppercase;
             options.Password.RequireLowercase = PasswordPolicy.RequireLowercase;
-            //options.Password.RequiredUniqueChars = 6;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
             options.Lockout.MaxFailedAccessAttempts = 10;
             options.Lockout.AllowedForNewUsers = true;

@@ -1,6 +1,6 @@
-﻿namespace SolidTemplate.API.Models;
+﻿namespace SolidTemplate.CrossCuttingConcerns.Exception;
 
-public class DomainException : Exception
+public class DomainException : System.Exception
 {
 
     public DomainException(string description)
@@ -11,13 +11,11 @@ public class DomainException : Exception
     public DomainException(string description, string message) : base(message)
     {
         Description = description;
-
     }
 
-    public DomainException(string description, string message, Exception innerException) : base(message, innerException)
+    public DomainException(string description, string message, System.Exception innerException) : base(message, innerException)
     {
         Description = description;
-
     }
     public string Description { get; }
 }

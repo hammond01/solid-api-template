@@ -1,6 +1,3 @@
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using SolidTemplate.Domain.DTOs.CategoryDto;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]")]

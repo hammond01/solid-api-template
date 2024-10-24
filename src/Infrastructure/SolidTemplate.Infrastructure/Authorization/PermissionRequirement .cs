@@ -13,13 +13,9 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         if (context.User.Claims.Any(c => c.Type == ApplicationClaimTypes.Permission && c.Value == requirement.Permission))
-        {
             context.Succeed(requirement);
-        }
         else
-        {
             context.Fail();
-        }
         return Task.CompletedTask;
     }
 }

@@ -1,10 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using SolidTemplate.Constants.ConfigurationOptions;
-using JwtRegisteredClaimNames=Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
-namespace SolidTemplate.Persistence.Managers;
+﻿namespace SolidTemplate.Persistence.Managers;
 
 public class AccountManager : IAccountManager
 {
@@ -15,7 +9,6 @@ public class AccountManager : IAccountManager
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-
 
     public AccountManager(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
         IDatabaseInitializer databaseInitializer, ILogger<AccountManager> logger, IOptions<IdentityConfig> identityConfig,
@@ -84,8 +77,9 @@ public class AccountManager : IAccountManager
                 foreach (var role in listResponse)
                 {
                     var claims = await _roleManager.GetClaimsAsync(role);
-                    var permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission)
-                        .Select(x => _entityPermissions.GetPermissionByValue(x.Value).Name).ToList();
+                    var permissions = claims.OrderBy(x => x.Value)
+                        .Where(x => x.Type == ApplicationClaimTypes.Permission)
+                        .Select(x => _entityPermissions.GetPermissionByValue(x.Value).Value).ToList();
 
                     roleDtoList.Add(new RoleDto
                     {
@@ -103,7 +97,7 @@ public class AccountManager : IAccountManager
 
                 userPermissions = userPermissions.Distinct().ToList();
 
-                authClaims.AddRange(userPermissions.Select(permission => new Claim("Permission", permission)));
+                authClaims.AddRange(userPermissions.Select(permission => new Claim(ApplicationClaimTypes.Permission, permission)));
 
                 var secretKey = _identityConfig.SECRET;
                 var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -117,7 +111,7 @@ public class AccountManager : IAccountManager
 
                 var loginResponse = new LoginResponse
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = ""// Cấu hình refresh token nếu cần
+                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = ""
                 };
                 return new ApiResponse(Status200OK, "LoginSuccess", loginResponse);
             }
@@ -130,7 +124,14 @@ public class AccountManager : IAccountManager
             return new ApiResponse(Status500InternalServerError, "LoginFailed");
         }
     }
-
+    public async Task<ApiResponse> Logout(ClaimsPrincipal authenticatedUser)
+    {
+        if (authenticatedUser.Identity!.IsAuthenticated)
+        {
+            await _signInManager.SignOutAsync();
+        }
+        return new ApiResponse(Status200OK, "Logout Successful");
+    }
     public async Task<ApiResponse> Register(RegisterRequest parameters)
     {
         if (string.IsNullOrWhiteSpace(parameters.UserName) ||
@@ -160,5 +161,117 @@ public class AccountManager : IAccountManager
         }
         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
         return new ApiResponse(404, $"Registration failed: {errors}");
+    }
+    public async Task<ApiResponse> ConfirmEmail(ConfirmEmailDto parameters)
+    {
+        var user = await _userManager.FindByIdAsync(parameters.UserId);
+
+        if (user == null)
+        {
+            _logger.LogInformation($"The user {parameters.UserId} doesn't exist");
+            return new ApiResponse(Status404NotFound, "The user doesn't exist");
+        }
+
+        if (user.EmailConfirmed)
+            return new ApiResponse(Status200OK, "EmailVerificationSuccessful");
+        var token = parameters.Token;
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+
+        if (!result.Succeeded)
+        {
+            var msg = result.GetErrors();
+            return new ApiResponse(Status400BadRequest, msg);
+        }
+
+        await _userManager.RemoveClaimAsync(user,
+        new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.FalseString, ClaimValueTypes.Boolean));
+        await _userManager.AddClaimAsync(user,
+        new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.TrueString, ClaimValueTypes.Boolean));
+
+        return new ApiResponse(Status200OK, "EmailVerificationSuccessful");
+    }
+    public async Task<ApiResponse> AdminUpdateUser(UserDto userDto)
+    {
+        var user = await _userManager.FindByIdAsync(userDto.UserId.ToString());
+
+        if (!user!.UserName!.Equals(DefaultUserNames.Administrator, StringComparison.CurrentCultureIgnoreCase) &&
+            !userDto.UserName!.Equals(DefaultUserNames.Administrator, StringComparison.CurrentCultureIgnoreCase))
+            user.UserName = userDto.UserName;
+
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+        user.Email = userDto.Email;
+
+        try
+        {
+            await _userManager.UpdateAsync(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Updating user exception: {ex.GetBaseException().Message}");
+            return new ApiResponse(Status500InternalServerError, "Operation Failed");
+        }
+
+        if (userDto.Roles == null)
+            return new ApiResponse(Status200OK, "Operation Successful");
+        {
+            try
+            {
+                var currentUserRoles = (List<string>)await _userManager.GetRolesAsync(user);
+
+                var rolesToAdd = userDto.Roles.Where(newUserRole => !currentUserRoles.Contains(newUserRole)).ToList();
+
+                if (rolesToAdd.Count > 0)
+                {
+                    await _userManager.AddToRolesAsync(user, rolesToAdd);
+
+                    foreach (var role in rolesToAdd)
+                        await _userManager.AddClaimAsync(user, new Claim($"Is{role}", ClaimValues.TrueString));
+                }
+
+                var rolesToRemove = currentUserRoles.Where(role => !userDto.Roles.Contains(role)).ToList();
+
+                if (rolesToRemove.Count > 0)
+                {
+                    if (user.UserName.Equals(DefaultUserNames.Administrator, StringComparison.CurrentCultureIgnoreCase))
+                        rolesToRemove.Remove(DefaultUserNames.Administrator);
+
+                    await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+
+                    foreach (var role in rolesToRemove)
+                        await _userManager.RemoveClaimAsync(user, new Claim($"Is{role}", ClaimValues.TrueString));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Updating Roles exception: {ex.GetBaseException().Message}");
+                return new ApiResponse(Status500InternalServerError, "Operation Failed");
+            }
+        }
+
+        return new ApiResponse(Status200OK, "Operation Successful");
+    }
+    public async Task<ApiResponse> AdminResetUserPasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal authenticatedUser)
+    {
+        var user = await _userManager.FindByIdAsync(changePasswordDto.UserId);
+        if (user == null)
+        {
+            _logger.LogWarning($"The user {changePasswordDto.UserId} doesn't exist");
+            return new ApiResponse(Status404NotFound, "The user doesn't exist");
+        }
+        var passToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, passToken, changePasswordDto.Password);
+        if (result.Succeeded)
+        {
+            _logger.LogInformation(user.UserName + "'s password reset; Requested from Admin interface by:" +
+                                   authenticatedUser.Identity!.Name);
+            return new ApiResponse(Status204NoContent, user.UserName + " password reset");
+        }
+        _logger.LogWarning(user.UserName + "'s password reset failed; Requested from Admin interface by:" +
+                           authenticatedUser.Identity!.Name);
+
+        var msg = result.GetErrors();
+        _logger.LogWarning($"Error while resetting password of {user.UserName}: {msg}");
+        return new ApiResponse(Status400BadRequest, msg);
     }
 }
