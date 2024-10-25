@@ -69,7 +69,9 @@ public class AccountManager : IAccountManager
 
                 var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user!.UserName!), new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(ClaimTypes.Name, user!.UserName!),
+                    new Claim(ApplicationClaimTypes.Name, user.UserName!),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -134,7 +136,9 @@ public class AccountManager : IAccountManager
 
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName!), new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(ClaimTypes.Name, user.UserName!),
+            new Claim(ApplicationClaimTypes.Name, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
         var userRoles = await _userManager.GetRolesAsync(user);

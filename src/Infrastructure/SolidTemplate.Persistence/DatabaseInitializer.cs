@@ -24,10 +24,8 @@ public class DatabaseInitializer : IDatabaseInitializer
     }
     public async Task EnsureAdminIdentitiesAsync()
     {
-        // Đảm bảo vai trò Administrator đã tồn tại
         await EnsureRoleAsync(DefaultRoleNames.Administrator, null);
 
-        // Tạo user Administrator
         await CreateUserAsync(DefaultUserNames.Administrator, "admin123@", "Admin", "Template", "admin@template.com",
         "+84 (123) 456-7890", new[]
         {

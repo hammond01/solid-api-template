@@ -16,4 +16,5 @@ public class WeatherForecastController : ControllerBase
         TemperatureC = Random.Shared.Next(-20, 55),
         Summary = _summaries[Random.Shared.Next(_summaries.Length)]
     }).ToArray();
+    
 }
