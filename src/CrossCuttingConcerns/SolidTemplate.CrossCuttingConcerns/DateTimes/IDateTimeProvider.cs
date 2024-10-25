@@ -1,4 +1,4 @@
-﻿namespace TSTemplate.CrossCuttingConcerns.DateTimes;
+﻿namespace SolidTemplate.CrossCuttingConcerns.DateTimes;
 
 public interface IDateTimeProvider
 {

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-namespace SolidTemplate.Persistence.Managers;
+﻿namespace SolidTemplate.Persistence.Managers;
 
 public class AdminManager : IAdminManager
 {

@@ -21,3 +21,6 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using SolidTemplate.Constants.ConfigurationOptions;
 global using SolidTemplate.Infrastructure.Extensions;
+global using System.Security.Cryptography;
+global using SolidTemplate.CrossCuttingConcerns.DateTimes;
+global using Microsoft.AspNetCore.Http;

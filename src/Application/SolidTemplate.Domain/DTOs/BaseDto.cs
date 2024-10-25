@@ -1,5 +1,4 @@
-﻿using ObjectCloner.Extensions;
-namespace SolidTemplate.Domain.DTOs;
+﻿namespace SolidTemplate.Domain.DTOs;
 
 public abstract class BaseDto : IMementoDto
 {

@@ -20,5 +20,5 @@ public class Category
     public string? PictureLink { get; set; }
 
     [InverseProperty("Category")]
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

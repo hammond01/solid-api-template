@@ -2,7 +2,9 @@
 
 public class AccountManager : IAccountManager
 {
+    private readonly ApplicationDbContext _context;
     private readonly IDatabaseInitializer _databaseInitializer;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly EntityPermissions _entityPermissions;
     private readonly IdentityConfig _identityConfig;
     private readonly ILogger<AccountManager> _logger;
@@ -12,7 +14,8 @@ public class AccountManager : IAccountManager
 
     public AccountManager(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
         IDatabaseInitializer databaseInitializer, ILogger<AccountManager> logger, IOptions<IdentityConfig> identityConfig,
-        RoleManager<IdentityRole> roleManager, EntityPermissions entityPermissions)
+        RoleManager<IdentityRole> roleManager, EntityPermissions entityPermissions, ApplicationDbContext context,
+        IDateTimeProvider dateTimeProvider)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -20,6 +23,8 @@ public class AccountManager : IAccountManager
         _logger = logger;
         _roleManager = roleManager;
         _entityPermissions = entityPermissions;
+        _context = context;
+        _dateTimeProvider = dateTimeProvider;
         _identityConfig = identityConfig.Value;
     }
 
@@ -69,6 +74,7 @@ public class AccountManager : IAccountManager
 
                 var userRoles = await _userManager.GetRolesAsync(user);
                 authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+                authClaims.AddRange(userRoles.Select(userRole => new Claim(ApplicationClaimTypes.Role, userRole)));
 
                 var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);
                 var listResponse = roleQuery.ToList();
@@ -99,19 +105,12 @@ public class AccountManager : IAccountManager
 
                 authClaims.AddRange(userPermissions.Select(permission => new Claim(ApplicationClaimTypes.Permission, permission)));
 
-                var secretKey = _identityConfig.SECRET;
-                var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-                var token = new JwtSecurityToken(
-                _identityConfig.ISSUER,
-                _identityConfig.AUDIENCE,
-                expires: DateTime.Now.AddMinutes(5),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authKey, SecurityAlgorithms.HmacSha256));
-
+                var token = GenerateJwtToken(authClaims);
+                var refreshToken = GenerateRefreshToken();
+                await SaveRefreshTokenAsync(user.Id, refreshToken);
                 var loginResponse = new LoginResponse
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = ""
+                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken.Token
                 };
                 return new ApiResponse(Status200OK, "LoginSuccess", loginResponse);
             }
@@ -123,6 +122,69 @@ public class AccountManager : IAccountManager
             _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
             return new ApiResponse(Status500InternalServerError, "LoginFailed");
         }
+    }
+    public async Task<ApiResponse> RefreshToken(string token, string refreshToken)
+    {
+        var principal = GetPrincipalFromExpiredToken(token);
+        var userName = principal.Identity!.Name;
+
+        var user = await _userManager.FindByNameAsync(userName!);
+        if (user == null || !await ValidateRefreshTokenAsync(user.Id, refreshToken))
+            return new ApiResponse(Status401Unauthorized, "Invalid refresh token");
+
+        var authClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName!), new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+        authClaims.AddRange(userRoles.Select(userRole => new Claim(ApplicationClaimTypes.Role, userRole)));
+
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        authClaims.AddRange(userClaims);
+
+        var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);
+        var listResponse = roleQuery.ToList();
+        var userPermissions = new List<string>();
+        var roleDtoList = new List<RoleDto>();
+
+        foreach (var role in listResponse)
+        {
+            var claims = await _roleManager.GetClaimsAsync(role);
+            var permissions = claims.OrderBy(x => x.Value)
+                .Where(x => x.Type == ApplicationClaimTypes.Permission)
+                .Select(x => _entityPermissions.GetPermissionByValue(x.Value).Value).ToList();
+
+            roleDtoList.Add(new RoleDto
+            {
+                Name = role.Name!, Permissions = permissions
+            });
+        }
+
+        foreach (var role in userRoles)
+        {
+            var roleDto = roleDtoList.FirstOrDefault(r => r.Name == role);
+            if (roleDto != null)
+            {
+                userPermissions.AddRange(roleDto.Permissions);
+            }
+        }
+
+        authClaims.AddRange(userPermissions.Select(permission => new Claim(ApplicationClaimTypes.Permission, permission)));
+
+        var newJwtToken = GenerateJwtToken(authClaims);
+
+        var newRefreshToken = GenerateRefreshToken();
+        await SaveRefreshTokenAsync(user.Id, newRefreshToken);
+
+        var response = new LoginResponse
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(newJwtToken), RefreshToken = newRefreshToken.Token
+        };
+
+        return new ApiResponse(Status200OK, "TokenRefreshed", response);
+
     }
     public async Task<ApiResponse> Logout(ClaimsPrincipal authenticatedUser)
     {
@@ -273,5 +335,61 @@ public class AccountManager : IAccountManager
         var msg = result.GetErrors();
         _logger.LogWarning($"Error while resetting password of {user.UserName}: {msg}");
         return new ApiResponse(Status400BadRequest, msg);
+    }
+    private RefreshToken GenerateRefreshToken() => new RefreshToken
+    {
+        Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+        Expires = _dateTimeProvider.UtcNow.AddDays(7),
+        Created = _dateTimeProvider.UtcNow
+    };
+
+    private async Task SaveRefreshTokenAsync(string userId, RefreshToken refreshToken)
+    {
+        refreshToken.UserId = userId;
+        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.SaveChangesAsync();
+    }
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = _identityConfig.ISSUER,
+            ValidAudience = _identityConfig.AUDIENCE,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_identityConfig.SECRET))
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            throw new SecurityTokenException("Invalid token");
+
+        return principal;
+    }
+
+    private async Task<bool> ValidateRefreshTokenAsync(string userId, string refreshToken)
+    {
+        var storedToken = await _context.RefreshTokens
+            .Where(t => t.UserId == userId && t.Token == refreshToken)
+            .FirstOrDefaultAsync();
+        return storedToken is { IsExpired: false, Revoked: null };
+    }
+
+    private JwtSecurityToken GenerateJwtToken(List<Claim> claims)
+    {
+        var secretKey = _identityConfig.SECRET;
+        var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+        return new JwtSecurityToken(
+        _identityConfig.ISSUER,
+        _identityConfig.AUDIENCE,
+        expires: _dateTimeProvider.UtcNow.AddMinutes(5),
+        claims: claims,
+        signingCredentials: new SigningCredentials(authKey, SecurityAlgorithms.HmacSha256));
     }
 }

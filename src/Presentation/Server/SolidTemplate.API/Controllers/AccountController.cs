@@ -18,6 +18,13 @@ public class AccountController : ControllerBase
         ? await _accountManager.Login(parameters)
         : new ApiResponse(Status400BadRequest, "InvalidData");
 
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
+    {
+        var response = await _accountManager.RefreshToken(request.Token, request.RefreshToken);
+        return Ok(response);
+    }
+
     [HttpPost("register")]
     [AllowAnonymous]
     [ProducesResponseType(Status200OK)]

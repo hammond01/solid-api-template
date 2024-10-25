@@ -29,6 +29,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<Territory> Territories { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

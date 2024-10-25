@@ -1,5 +1,5 @@
-﻿using SolidTemplate.Infrastructure.DateTimes;
-using TSTemplate.CrossCuttingConcerns.DateTimes;
+﻿using SolidTemplate.CrossCuttingConcerns.DateTimes;
+using SolidTemplate.Infrastructure.DateTimes;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-namespace SolidTemplate.Domain.DataModels;
+﻿namespace SolidTemplate.Domain.DataModels;
 
 public class ApplicationUser : IdentityUser
 {
