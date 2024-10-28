@@ -1,4 +1,5 @@
-﻿namespace SolidTemplate.Application.Managers;
+﻿using SolidTemplate.Application.DTOs.AdminDto;
+namespace SolidTemplate.Application.Managers;
 
 public interface IAdminManager
 {

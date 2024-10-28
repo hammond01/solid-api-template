@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.Domain.DTOs.CategoryDto;
+﻿namespace SolidTemplate.Application.DTOs.CategoryDto;
 
 public class CreateCategoryDto
 {

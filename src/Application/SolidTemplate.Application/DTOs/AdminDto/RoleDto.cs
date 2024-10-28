@@ -1,4 +1,5 @@
-﻿namespace SolidTemplate.Domain.DTOs.AdminDto;
+﻿using System.ComponentModel.DataAnnotations;
+namespace SolidTemplate.Application.DTOs.AdminDto;
 
 public class RoleDto
 {

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-namespace SolidTemplate.Application.Managers;
+﻿namespace SolidTemplate.Application.Managers;
 
 public interface IAccountManager
 {

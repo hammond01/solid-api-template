@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.Domain.DTOs;
+﻿namespace SolidTemplate.Application.DTOs;
 
 public abstract class BaseDto : IMementoDto
 {

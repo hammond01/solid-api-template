@@ -1,3 +1,5 @@
+using SolidTemplate.Application.DTOs.AdminDto;
+using SolidTemplate.Application.DTOs.UserDto;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]/[action]")]

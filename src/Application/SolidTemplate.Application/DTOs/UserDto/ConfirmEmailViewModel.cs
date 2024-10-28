@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.Domain.DTOs.UserDto;
+﻿namespace SolidTemplate.Application.DTOs.UserDto;
 
 public class ConfirmEmailDto
 {

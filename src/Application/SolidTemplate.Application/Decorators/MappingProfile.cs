@@ -1,4 +1,6 @@
-﻿namespace SolidTemplate.Application.Decorators;
+﻿using SolidTemplate.Application.DTOs.CategoryDto;
+using SolidTemplate.Application.DTOs.UserDto;
+namespace SolidTemplate.Application.Decorators;
 
 public class MappingProfile : Profile
 {

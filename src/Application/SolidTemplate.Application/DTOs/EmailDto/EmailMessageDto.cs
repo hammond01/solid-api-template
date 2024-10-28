@@ -1,4 +1,4 @@
-﻿namespace SolidTemplate.Domain.DTOs.EmailDto;
+﻿namespace SolidTemplate.Application.DTOs.EmailDto;
 
 public class EmailMessageDto
 {
