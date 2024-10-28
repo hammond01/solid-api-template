@@ -6,3 +6,5 @@ global using SolidTemplate.Constants.AuthorizationDefinitions;
 global using System.Security.Claims;
 global using System.Security.Principal;
 global using Microsoft.AspNetCore.Identity;
+global using SolidTemplate.CrossCuttingConcerns.DateTimes;
+global using SolidTemplate.Infrastructure.DateTimes;

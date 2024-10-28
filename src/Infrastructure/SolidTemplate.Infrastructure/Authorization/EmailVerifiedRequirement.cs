@@ -1,5 +1,4 @@
-﻿using SolidTemplate.Constants.AuthorizationDefinitions;
-namespace SolidTemplate.Infrastructure.Authorization;
+﻿namespace SolidTemplate.Infrastructure.Authorization;
 
 public class EmailVerifiedRequirement : IAuthorizationRequirement
 {

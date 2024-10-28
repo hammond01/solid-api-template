@@ -1,5 +1,4 @@
-﻿using SolidTemplate.CrossCuttingConcerns.DateTimes;
-namespace SolidTemplate.Infrastructure.DateTimes;
+﻿namespace SolidTemplate.Infrastructure.DateTimes;
 
 public class DateTimeProvider : IDateTimeProvider
 {
