@@ -1,4 +1,6 @@
-﻿namespace SolidTemplate.Domain.DataModels;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace SolidTemplate.Domain.DataModels;
 
 [Table("Region")]
 public class Region

@@ -18,11 +18,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores"/>
-    <PackageReference Include="ObjectCloner.Extensions"/>
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="C:\Users\Administrator\.nuget\packages\breeze.persistence.efcore\7.3.0\contentFiles\any\net8.0\BreezeB.ico"/>
-  </ItemGroup>
-
+  
 </Project>

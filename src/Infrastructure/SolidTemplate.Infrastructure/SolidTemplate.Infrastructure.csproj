@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
-    <ProjectReference Include="..\..\CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns.csproj"/>
+    <ProjectReference Include="..\..\CrossCuttingConcerns\SolidTemplate.Share\SolidTemplate.Share.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

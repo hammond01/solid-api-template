@@ -1,4 +1,6 @@
-﻿namespace SolidTemplate.Infrastructure.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+namespace SolidTemplate.Infrastructure.Authorization;
 
 public class AuthorizationPolicyProvider : SharedAuthorizationPolicyProvider
 {

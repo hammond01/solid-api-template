@@ -1,4 +1,6 @@
 ﻿// using modified example from https://chrissainty.com/securing-your-blazor-apps-configuring-policy-based-authorization-with-blazor/
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 namespace SolidTemplate.Infrastructure.Authorization;
 
 public class DomainRequirement : IAuthorizationRequirement

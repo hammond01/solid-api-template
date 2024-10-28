@@ -1,3 +1,14 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using SolidTemplate.Application;
+using SolidTemplate.Constants.AuthorizationDefinitions;
+using SolidTemplate.Constants.ConfigurationOptions;
+using SolidTemplate.Domain.DataModels;
+using SolidTemplate.Infrastructure;
+using SolidTemplate.Infrastructure.Storage;
+using SolidTemplate.Persistence;
 namespace SolidTemplate.API;
 
 public class Program

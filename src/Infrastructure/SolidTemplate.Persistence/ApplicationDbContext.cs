@@ -1,4 +1,7 @@
-﻿namespace SolidTemplate.Persistence;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using SolidTemplate.Domain.DataModels;
+namespace SolidTemplate.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

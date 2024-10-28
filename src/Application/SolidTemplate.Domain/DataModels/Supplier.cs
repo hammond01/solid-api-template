@@ -1,4 +1,7 @@
-﻿namespace SolidTemplate.Domain.DataModels;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+namespace SolidTemplate.Domain.DataModels;
 
 [Index("CompanyName", Name = "CompanyName")]
 [Index("PostalCode", Name = "PostalCode")]

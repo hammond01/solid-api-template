@@ -1,4 +1,7 @@
-﻿namespace SolidTemplate.Infrastructure;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using SolidTemplate.Infrastructure.Authorization;
+namespace SolidTemplate.Infrastructure;
 
 public static class InfrastructureConfiguration
 {

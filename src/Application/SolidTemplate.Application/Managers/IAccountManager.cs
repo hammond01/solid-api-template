@@ -1,4 +1,7 @@
-﻿namespace SolidTemplate.Application.Managers;
+﻿using System.Security.Claims;
+using SolidTemplate.Domain.Common;
+using SolidTemplate.Share.DTOs.UserDto;
+namespace SolidTemplate.Application.Managers;
 
 public interface IAccountManager
 {

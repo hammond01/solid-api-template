@@ -1,4 +1,25 @@
-﻿namespace SolidTemplate.Persistence.Managers;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using SolidTemplate.Application.Managers;
+using SolidTemplate.Constants.AuthorizationDefinitions;
+using SolidTemplate.Constants.ConfigurationOptions;
+using SolidTemplate.Domain.Common;
+using SolidTemplate.Domain.DataModels;
+using SolidTemplate.Infrastructure.Extensions;
+using SolidTemplate.Infrastructure.Storage;
+using SolidTemplate.Share.DateTimes;
+using SolidTemplate.Share.DTOs.AdminDto;
+using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Share.Permission;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+namespace SolidTemplate.Persistence.Managers;
 
 public class AccountManager : IAccountManager
 {

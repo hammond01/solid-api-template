@@ -1,4 +1,6 @@
-﻿namespace SolidTemplate.Infrastructure.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using SolidTemplate.Constants.AuthorizationDefinitions;
+namespace SolidTemplate.Infrastructure.Authorization;
 
 public class PermissionRequirement : IAuthorizationRequirement
 {

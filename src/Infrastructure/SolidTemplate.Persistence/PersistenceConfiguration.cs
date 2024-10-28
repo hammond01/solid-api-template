@@ -1,4 +1,10 @@
-﻿namespace SolidTemplate.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SolidTemplate.Application.Managers;
+using SolidTemplate.Infrastructure.Storage;
+using SolidTemplate.Persistence.Managers;
+using SolidTemplate.Share.Permission;
+namespace SolidTemplate.Persistence;
 
 public static class PersistenceConfiguration
 {

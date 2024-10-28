@@ -34,9 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossCuttingConcerns", "CrossCuttingConcerns", "{915B80C8-D4FD-4A3B-8CFE-0D40828F9C51}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Share", "Share", "{915B80C8-D4FD-4A3B-8CFE-0D40828F9C51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidTemplate.CrossCuttingConcerns", "src\CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns\SolidTemplate.CrossCuttingConcerns.csproj", "{939577BB-F531-4E73-998B-5255197AAD9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidTemplate.Share", "src\CrossCuttingConcerns\SolidTemplate.Share\SolidTemplate.Share.csproj", "{939577BB-F531-4E73-998B-5255197AAD9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidTemplate.Constants", "src\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj", "{7EA48792-EF0E-4A34-B466-0C995EDC2CD4}"
 EndProject

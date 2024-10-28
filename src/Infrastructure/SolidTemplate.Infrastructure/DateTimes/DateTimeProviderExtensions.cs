@@ -1,4 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using SolidTemplate.Infrastructure.DateTimes;
+using SolidTemplate.Share.DateTimes;
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DateTimeProviderExtensions

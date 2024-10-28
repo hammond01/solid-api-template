@@ -1,4 +1,16 @@
-﻿namespace SolidTemplate.Persistence.Managers;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using SolidTemplate.Application.Managers;
+using SolidTemplate.Constants.AuthorizationDefinitions;
+using SolidTemplate.Domain.Common;
+using SolidTemplate.Domain.DataModels;
+using SolidTemplate.Infrastructure.Extensions;
+using SolidTemplate.Share.DTOs.AdminDto;
+using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Share.Permission;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+namespace SolidTemplate.Persistence.Managers;
 
 public class AdminManager : IAdminManager
 {

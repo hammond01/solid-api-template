@@ -1,3 +1,6 @@
+using System.Security.Claims;
+using System.Security.Principal;
+using Microsoft.AspNetCore.Identity;
 namespace SolidTemplate.Infrastructure.Extensions;
 
 public static class Extensions

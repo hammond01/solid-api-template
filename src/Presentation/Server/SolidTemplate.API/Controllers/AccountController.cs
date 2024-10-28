@@ -1,4 +1,10 @@
-using SolidTemplate.Application.DTOs.UserDto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SolidTemplate.Application.Managers;
+using SolidTemplate.Domain.Common;
+using SolidTemplate.Share.DTOs.UserDto;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]")]

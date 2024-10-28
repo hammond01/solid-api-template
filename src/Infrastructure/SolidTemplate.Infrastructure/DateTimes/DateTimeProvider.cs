@@ -1,4 +1,5 @@
-﻿namespace SolidTemplate.Infrastructure.DateTimes;
+﻿using SolidTemplate.Share.DateTimes;
+namespace SolidTemplate.Infrastructure.DateTimes;
 
 public class DateTimeProvider : IDateTimeProvider
 {

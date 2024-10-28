@@ -1,4 +1,11 @@
-﻿namespace SolidTemplate.Persistence;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SolidTemplate.Constants.AuthorizationDefinitions;
+using SolidTemplate.Domain.DataModels;
+using SolidTemplate.Infrastructure.Storage;
+using SolidTemplate.Share.Permission;
+namespace SolidTemplate.Persistence;
 
 public class DatabaseInitializer : IDatabaseInitializer
 {

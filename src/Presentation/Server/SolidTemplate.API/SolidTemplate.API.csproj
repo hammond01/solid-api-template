@@ -23,6 +23,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\AppStrings.resx">
+      <Generator>MSBuild:Compile</Generator>
+      <LastGenOutput>Resources\AppStrings.Designer.cs</LastGenOutput>
+      <StronglyTypedFileName>$(IntermediateOutputPath)\AppStrings.Designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>SolidTemplate.API.Resources</StronglyTypedNamespace>
+      <StronglyTypedClassName>AppStrings</StronglyTypedClassName>
+      <PublicClass>true</PublicClass>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\IdentityStrings.resx">
+      <Generator>MSBuild:Compile</Generator>
+      <LastGenOutput>Resources\IdentityStrings.Designer.cs</LastGenOutput>
+      <StronglyTypedFileName>$(IntermediateOutputPath)\IdentityStrings.Designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>SolidTemplate.API.Resources</StronglyTypedNamespace>
+      <StronglyTypedClassName>IdentityStrings</StronglyTypedClassName>
+      <PublicClass>true</PublicClass>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Middleware\"/>
   </ItemGroup>
 
