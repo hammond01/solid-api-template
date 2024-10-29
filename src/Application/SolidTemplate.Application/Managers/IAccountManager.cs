@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using SolidTemplate.Domain.Common;
-using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Shared.DTOs.UserDto;
 namespace SolidTemplate.Application.Managers;
 
 public interface IAccountManager

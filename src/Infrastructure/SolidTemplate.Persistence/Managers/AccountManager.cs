@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,10 +15,11 @@ using SolidTemplate.Domain.Common;
 using SolidTemplate.Domain.DataModels;
 using SolidTemplate.Infrastructure.Extensions;
 using SolidTemplate.Infrastructure.Storage;
-using SolidTemplate.Share.DateTimes;
-using SolidTemplate.Share.DTOs.AdminDto;
-using SolidTemplate.Share.DTOs.UserDto;
-using SolidTemplate.Share.Permission;
+using SolidTemplate.Shared.DateTimes;
+using SolidTemplate.Shared.DTOs.AdminDto;
+using SolidTemplate.Shared.DTOs.UserDto;
+using SolidTemplate.Shared.Permission;
+using SolidTemplate.Shared.Resources;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace SolidTemplate.Persistence.Managers;
 
@@ -28,15 +30,17 @@ public class AccountManager : IAccountManager
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly EntityPermissions _entityPermissions;
     private readonly IdentityConfig _identityConfig;
+    private readonly IStringLocalizer<AppStrings> _localizer;
     private readonly ILogger<AccountManager> _logger;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
 
+
     public AccountManager(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
         IDatabaseInitializer databaseInitializer, ILogger<AccountManager> logger, IOptions<IdentityConfig> identityConfig,
         RoleManager<IdentityRole> roleManager, EntityPermissions entityPermissions, ApplicationDbContext context,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider, IStringLocalizer<AppStrings> localizer)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -46,105 +50,8 @@ public class AccountManager : IAccountManager
         _entityPermissions = entityPermissions;
         _context = context;
         _dateTimeProvider = dateTimeProvider;
+        _localizer = localizer;
         _identityConfig = identityConfig.Value;
-    }
-
-    public async Task<ApiResponse> Login(LoginRequest parameters)
-    {
-        try
-        {
-            await _databaseInitializer.EnsureAdminIdentitiesAsync();
-
-            var result = await _signInManager.PasswordSignInAsync(parameters.UserName, parameters.Password, parameters.RememberMe,
-            true);
-
-            if (result.RequiresTwoFactor)
-            {
-                _logger.LogInformation("Two factor authentication required for user " + parameters.UserName);
-
-                return new ApiResponse(Status401Unauthorized, "Two factor authentication required")
-                {
-                    Result = new LoginResponseModel
-                    {
-                        RequiresTwoFactor = true
-                    }
-                };
-            }
-
-            if (result.IsLockedOut)
-            {
-                _logger.LogInformation("User Locked out: " + parameters.UserName);
-                return new ApiResponse(Status401Unauthorized, "LockedUser");
-            }
-
-            if (result.IsNotAllowed)
-            {
-                _logger.LogInformation($"User {parameters.UserName} not allowed to log in, because email is not confirmed");
-                return new ApiResponse(Status401Unauthorized, "EmailNotConfirmed");
-            }
-
-            if (result.Succeeded)
-            {
-                var user = await _userManager.FindByNameAsync(parameters.UserName);
-                _logger.LogInformation($"Logged In user {parameters.UserName}");
-
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user!.UserName!),
-                    new Claim(ApplicationClaimTypes.Name, user.UserName!),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-                authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
-                authClaims.AddRange(userRoles.Select(userRole => new Claim(ApplicationClaimTypes.Role, userRole)));
-
-                var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);
-                var listResponse = roleQuery.ToList();
-                var userPermissions = new List<string>();
-                var roleDtoList = new List<RoleDto>();
-                foreach (var role in listResponse)
-                {
-                    var claims = await _roleManager.GetClaimsAsync(role);
-                    var permissions = claims.OrderBy(x => x.Value)
-                        .Where(x => x.Type == ApplicationClaimTypes.Permission)
-                        .Select(x => _entityPermissions.GetPermissionByValue(x.Value).Value).ToList();
-
-                    roleDtoList.Add(new RoleDto
-                    {
-                        Name = role.Name!, Permissions = permissions
-                    });
-                }
-                foreach (var role in userRoles)
-                {
-                    var roleDto = roleDtoList.FirstOrDefault(r => r.Name == role);
-                    if (roleDto != null)
-                    {
-                        userPermissions.AddRange(roleDto.Permissions);
-                    }
-                }
-
-                userPermissions = userPermissions.Distinct().ToList();
-
-                authClaims.AddRange(userPermissions.Select(permission => new Claim(ApplicationClaimTypes.Permission, permission)));
-
-                var token = GenerateJwtToken(authClaims);
-                var refreshToken = GenerateRefreshToken();
-                await SaveRefreshTokenAsync(user.Id, refreshToken);
-                var loginResponse = new LoginResponse
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken.Token
-                };
-                return new ApiResponse(Status200OK, "LoginSuccess", loginResponse);
-            }
-            _logger.LogInformation($"Invalid Password for user {parameters.UserName}");
-            return new ApiResponse(Status401Unauthorized, "LoginFailed");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
-            return new ApiResponse(Status500InternalServerError, "LoginFailed");
-        }
     }
     public async Task<ApiResponse> RefreshToken(string token, string refreshToken)
     {
@@ -153,7 +60,7 @@ public class AccountManager : IAccountManager
 
         var user = await _userManager.FindByNameAsync(userName!);
         if (user == null || !await ValidateRefreshTokenAsync(user.Id, refreshToken))
-            return new ApiResponse(Status401Unauthorized, "Invalid refresh token");
+            return new ApiResponse(Status401Unauthorized, _localizer[nameof(AppStrings.InvalidToken)]);
 
         var authClaims = new List<Claim>
         {
@@ -208,7 +115,7 @@ public class AccountManager : IAccountManager
             Token = new JwtSecurityTokenHandler().WriteToken(newJwtToken), RefreshToken = newRefreshToken.Token
         };
 
-        return new ApiResponse(Status200OK, "TokenRefreshed", response);
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.TokenRefreshed)], response);
 
     }
     public async Task<ApiResponse> Logout(ClaimsPrincipal authenticatedUser)
@@ -217,20 +124,117 @@ public class AccountManager : IAccountManager
         {
             await _signInManager.SignOutAsync();
         }
-        return new ApiResponse(Status200OK, "Logout Successful");
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.LogoutSuccessful)]);
+    }
+
+    public async Task<ApiResponse> Login(LoginRequest parameters)
+    {
+        try
+        {
+            await _databaseInitializer.EnsureAdminIdentitiesAsync();
+
+            var result = await _signInManager.PasswordSignInAsync(parameters.UserName, parameters.Password, parameters.RememberMe,
+            true);
+
+            if (result.RequiresTwoFactor)
+            {
+                _logger.LogInformation("Two factor authentication required for user " + parameters.UserName);
+                return new ApiResponse(Status401Unauthorized, _localizer[nameof(AppStrings.TwoFactorAuthenticationRequired)])
+                {
+                    Result = new LoginResponseModel
+                    {
+                        RequiresTwoFactor = true
+                    }
+                };
+            }
+
+            if (result.IsLockedOut)
+            {
+                _logger.LogInformation("User Locked out: " + parameters.UserName);
+                return new ApiResponse(Status401Unauthorized, _localizer[nameof(AppStrings.LockedUser)]);
+            }
+
+            if (result.IsNotAllowed)
+            {
+                _logger.LogInformation($"User {parameters.UserName} not allowed to log in, because email is not confirmed");
+                return new ApiResponse(Status401Unauthorized, _localizer[nameof(AppStrings.EmailNotConfirmed)]);
+            }
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByNameAsync(parameters.UserName);
+                _logger.LogInformation($"Logged In user {parameters.UserName}");
+
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user!.UserName!),
+                    new Claim(ApplicationClaimTypes.Name, user.UserName!),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+                authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+                authClaims.AddRange(userRoles.Select(userRole => new Claim(ApplicationClaimTypes.Role, userRole)));
+
+                var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);
+                var listResponse = roleQuery.ToList();
+                var userPermissions = new List<string>();
+                var roleDtoList = new List<RoleDto>();
+                foreach (var role in listResponse)
+                {
+                    var claims = await _roleManager.GetClaimsAsync(role);
+                    var permissions = claims.OrderBy(x => x.Value)
+                        .Where(x => x.Type == ApplicationClaimTypes.Permission)
+                        .Select(x => _entityPermissions.GetPermissionByValue(x.Value).Value).ToList();
+
+                    roleDtoList.Add(new RoleDto
+                    {
+                        Name = role.Name!, Permissions = permissions
+                    });
+                }
+                foreach (var role in userRoles)
+                {
+                    var roleDto = roleDtoList.FirstOrDefault(r => r.Name == role);
+                    if (roleDto != null)
+                    {
+                        userPermissions.AddRange(roleDto.Permissions);
+                    }
+                }
+
+                userPermissions = userPermissions.Distinct().ToList();
+
+                authClaims.AddRange(userPermissions.Select(permission => new Claim(ApplicationClaimTypes.Permission, permission)));
+
+                var token = GenerateJwtToken(authClaims);
+                var refreshToken = GenerateRefreshToken();
+                await SaveRefreshTokenAsync(user.Id, refreshToken);
+                var loginResponse = new LoginResponse
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken.Token
+                };
+                return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.LoginSuccess)], loginResponse);
+            }
+            _logger.LogInformation($"Invalid Password for user {parameters.UserName}");
+            return new ApiResponse(Status401Unauthorized, _localizer[nameof(AppStrings.LoginFailed)]);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
+            return new ApiResponse(Status500InternalServerError, _localizer[nameof(AppStrings.LoginFailed)]);
+        }
     }
     public async Task<ApiResponse> Register(RegisterRequest parameters)
     {
         if (string.IsNullOrWhiteSpace(parameters.UserName) ||
             string.IsNullOrWhiteSpace(parameters.Password))
         {
-            return new ApiResponse(404, "Username and password are required.");
+            return new ApiResponse(404, _localizer[nameof(AppStrings.UsernameAndPasswordAreRequired)]);
         }
 
         var existingUser = await _userManager.FindByNameAsync(parameters.UserName);
         if (existingUser != null)
         {
-            return new ApiResponse(404, "User already exists.");
+            return new ApiResponse(404, _localizer[nameof(AppStrings.UserAlreadyExists)]);
         }
 
         var newUser = new ApplicationUser
@@ -244,7 +248,7 @@ public class AccountManager : IAccountManager
         var result = await _userManager.CreateAsync(newUser, parameters.Password);
         if (result.Succeeded)
         {
-            return new ApiResponse(200, "User registered successfully.");
+            return new ApiResponse(200, _localizer[nameof(AppStrings.UserRegisteredSuccessfully)]);
         }
         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
         return new ApiResponse(404, $"Registration failed: {errors}");
@@ -256,11 +260,11 @@ public class AccountManager : IAccountManager
         if (user == null)
         {
             _logger.LogInformation($"The user {parameters.UserId} doesn't exist");
-            return new ApiResponse(Status404NotFound, "The user doesn't exist");
+            return new ApiResponse(Status404NotFound, _localizer[nameof(AppStrings.UserDoesntExist)]);
         }
 
         if (user.EmailConfirmed)
-            return new ApiResponse(Status200OK, "EmailVerificationSuccessful");
+            return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.EmailVerificationSuccessful)]);
         var token = parameters.Token;
         var result = await _userManager.ConfirmEmailAsync(user, token);
 
@@ -275,7 +279,7 @@ public class AccountManager : IAccountManager
         await _userManager.AddClaimAsync(user,
         new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.TrueString, ClaimValueTypes.Boolean));
 
-        return new ApiResponse(Status200OK, "EmailVerificationSuccessful");
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.EmailVerificationSuccessful)]);
     }
     public async Task<ApiResponse> AdminUpdateUser(UserDto userDto)
     {
@@ -296,11 +300,11 @@ public class AccountManager : IAccountManager
         catch (Exception ex)
         {
             _logger.LogError($"Updating user exception: {ex.GetBaseException().Message}");
-            return new ApiResponse(Status500InternalServerError, "Operation Failed");
+            return new ApiResponse(Status500InternalServerError, _localizer[nameof(AppStrings.OperationFailed)]);
         }
 
         if (userDto.Roles == null)
-            return new ApiResponse(Status200OK, "Operation Successful");
+            return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.OperationSuccessful)]);
         {
             try
             {
@@ -332,11 +336,11 @@ public class AccountManager : IAccountManager
             catch (Exception ex)
             {
                 _logger.LogError($"Updating Roles exception: {ex.GetBaseException().Message}");
-                return new ApiResponse(Status500InternalServerError, "Operation Failed");
+                return new ApiResponse(Status500InternalServerError, _localizer[nameof(AppStrings.OperationFailed)]);
             }
         }
 
-        return new ApiResponse(Status200OK, "Operation Successful");
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.OperationSuccessful)]);
     }
     public async Task<ApiResponse> AdminResetUserPasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal authenticatedUser)
     {
@@ -344,7 +348,7 @@ public class AccountManager : IAccountManager
         if (user == null)
         {
             _logger.LogWarning($"The user {changePasswordDto.UserId} doesn't exist");
-            return new ApiResponse(Status404NotFound, "The user doesn't exist");
+            return new ApiResponse(Status404NotFound, _localizer[nameof(AppStrings.UserDoesntExist)]);
         }
         var passToken = await _userManager.GeneratePasswordResetTokenAsync(user);
         var result = await _userManager.ResetPasswordAsync(user, passToken, changePasswordDto.Password);
@@ -392,7 +396,7 @@ public class AccountManager : IAccountManager
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            throw new SecurityTokenException("Invalid token");
+            throw new SecurityTokenException(_localizer[nameof(AppStrings.InvalidToken)]);
 
         return principal;
     }

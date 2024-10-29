@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SolidTemplate.Constants.AuthorizationDefinitions;
 using SolidTemplate.Domain.DataModels;
 using SolidTemplate.Infrastructure.Storage;
-using SolidTemplate.Share.Permission;
+using SolidTemplate.Shared.Permission;
 namespace SolidTemplate.Persistence;
 
 public class DatabaseInitializer : IDatabaseInitializer

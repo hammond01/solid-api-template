@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using SolidTemplate.Domain.DataModels;
-using SolidTemplate.Share.DTOs.CategoryDto;
-using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Shared.DTOs.CategoryDto;
+using SolidTemplate.Shared.DTOs.UserDto;
 namespace SolidTemplate.Application.Decorators;
 
 public class MappingProfile : Profile

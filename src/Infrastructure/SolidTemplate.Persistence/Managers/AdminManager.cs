@@ -1,14 +1,16 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using SolidTemplate.Application.Managers;
 using SolidTemplate.Constants.AuthorizationDefinitions;
 using SolidTemplate.Domain.Common;
 using SolidTemplate.Domain.DataModels;
 using SolidTemplate.Infrastructure.Extensions;
-using SolidTemplate.Share.DTOs.AdminDto;
-using SolidTemplate.Share.DTOs.UserDto;
-using SolidTemplate.Share.Permission;
+using SolidTemplate.Shared.DTOs.AdminDto;
+using SolidTemplate.Shared.DTOs.UserDto;
+using SolidTemplate.Shared.Permission;
+using SolidTemplate.Shared.Resources;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace SolidTemplate.Persistence.Managers;
 
@@ -16,16 +18,19 @@ public class AdminManager : IAdminManager
 {
     private readonly EntityPermissions _entityPermissions;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IStringLocalizer<AppStrings> _localizer;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
 
+
     public AdminManager(RoleManager<IdentityRole> roleManager, EntityPermissions entityPermissions,
-        UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IStringLocalizer<AppStrings> localizer)
     {
         _roleManager = roleManager;
         _entityPermissions = entityPermissions;
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
+        _localizer = localizer;
     }
 
     public async Task<ApiResponse> GetUsers(int pageSize = 10, int pageNumber = 0)
@@ -47,13 +52,12 @@ public class AdminManager : IAdminManager
                 Roles = await _userManager.GetRolesAsync(applicationUser).ConfigureAwait(true) as List<string>
             });
         }
-
-        return new ApiResponse(Status200OK, $"{count} users fetched", userDtoList);
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.UsersFetched), count], userDtoList);
     }
     public ApiResponse GetPermissions()
     {
         var permissions = _entityPermissions.GetAllPermissionNames();
-        return new ApiResponse(Status200OK, "Permissions list fetched", permissions);
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.PermissionsListFetched)], permissions);
     }
     public async Task<ApiResponse> GetRolesAsync(int pageSize = 0, int pageNumber = 0)
     {
@@ -74,8 +78,7 @@ public class AdminManager : IAdminManager
                 Name = role.Name ?? "", Permissions = permissions
             });
         }
-
-        return new ApiResponse(Status200OK, $"{count} roles fetched", roleDtoList);
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.RolesFetched), count], roleDtoList);
     }
     public async Task<ApiResponse> GetRoleAsync(string roleName)
     {
@@ -90,12 +93,44 @@ public class AdminManager : IAdminManager
             Name = roleName, Permissions = permissions
         };
 
-        return new ApiResponse(Status200OK, "Role fetched", roleDto);
+        return new ApiResponse(Status200OK, _localizer[nameof(AppStrings.RoleFetched)], roleDto);
+    }
+    public async Task<ApiResponse> DeleteRoleAsync(string name)
+    {
+        var response = new ApiResponse(Status200OK, _localizer[nameof(AppStrings.RoleDeleted)], name);
+
+        // Check if the role is used by a user
+        var users = await _userManager.GetUsersInRoleAsync(name);
+        if (users.Any())
+            response = new ApiResponse(Status404NotFound, _localizer[nameof(AppStrings.RoleInUseWarning)], name);
+        else
+        {
+            if (name == DefaultRoleNames.Administrator)
+                response = new ApiResponse(Status403Forbidden, _localizer[nameof(AppStrings.RoleCannotDeleted)], name);
+            else
+            {
+                // Delete the role
+                var role = await _roleManager.FindByNameAsync(name);
+                await _roleManager.DeleteAsync(role!);
+            }
+        }
+
+        return response;
+    }
+    public string GetUserLogin()
+    {
+        if (_httpContextAccessor.HttpContext is null)
+            return "";
+        var userName = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
+        return string.IsNullOrEmpty(userName) ? "" : userName.ToUpper();
     }
     public async Task<ApiResponse> CreateRoleAsync(RoleDto roleDto)
     {
         if (_roleManager.Roles.Any(r => r.Name == roleDto.Name))
-            return new ApiResponse(Status400BadRequest, $"Role {roleDto.Name} already exists");
+        {
+            var message = string.Format(_localizer[nameof(AppStrings.RolesFetched)], roleDto.Name);
+            return new ApiResponse(Status400BadRequest, message);
+        }
 
         var result = await _roleManager.CreateAsync(new IdentityRole(roleDto.Name));
 
@@ -115,25 +150,28 @@ public class AdminManager : IAdminManager
             if (!resultAddClaim.Succeeded)
                 await _roleManager.DeleteAsync(role!);
         }
-
-        return new ApiResponse(Status200OK, $"Role {roleDto.Name} created");
+        var roleCreated = string.Format(_localizer[nameof(AppStrings.RolesFetched)], roleDto.Name);
+        return new ApiResponse(Status200OK, roleCreated);
     }
     public async Task<ApiResponse> UpdateRoleAsync(RoleDto roleDto)
     {
-        var response = new ApiResponse(Status200OK, $"Role {roleDto.Name} updated", roleDto);
+        var updatedRole = string.Format(_localizer[nameof(AppStrings.RoleUpdated)], roleDto.Name);
+        var response = new ApiResponse(Status200OK, updatedRole, roleDto);
 
         if (!_roleManager.Roles.Any(r => r.Name == roleDto.Name))
-            response = new ApiResponse(Status400BadRequest, $"The role {roleDto.Name} doesn't exist");
+        {
+            response = new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.RoleNotFound), roleDto.Name]);
+        }
         else
         {
             if (roleDto.Name == DefaultRoleNames.Administrator)
-                response = new ApiResponse(Status403Forbidden, $"Role {roleDto.Name} cannot be edited");
+                response = new ApiResponse(Status403Forbidden, _localizer[nameof(AppStrings.RoleCannotBeEdited), roleDto.Name]);
             else
             {
                 // Create the permissions
                 var role = await _roleManager.FindByNameAsync(roleDto.Name);
                 if (role == null)
-                    response = new ApiResponse(Status400BadRequest, $"Role {roleDto.Name} not found");
+                    response = new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.RoleNotFound), roleDto.Name]);
 
                 var claims = await _roleManager.GetClaimsAsync(role!);
                 var permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission)
@@ -155,33 +193,11 @@ public class AdminManager : IAdminManager
 
         return response;
     }
-    public async Task<ApiResponse> DeleteRoleAsync(string name)
-    {
-        var response = new ApiResponse(Status200OK, $"Role {name} deleted");
-
-        // Check if the role is used by a user
-        var users = await _userManager.GetUsersInRoleAsync(name);
-        if (users.Any())
-            response = new ApiResponse(Status404NotFound, "RoleInUseWarning", name);
-        else
-        {
-            if (name == DefaultRoleNames.Administrator)
-                response = new ApiResponse(Status403Forbidden, $"Role {name} cannot be deleted");
-            else
-            {
-                // Delete the role
-                var role = await _roleManager.FindByNameAsync(name);
-                await _roleManager.DeleteAsync(role!);
-            }
-        }
-
-        return response;
-    }
     public async Task<ApiResponse> UpdateUserRoles(UpdateUserDto updateUserDto)
     {
         var user = await _userManager.FindByIdAsync(updateUserDto.UserId.ToString());
         if (user == null)
-            return new ApiResponse(Status404NotFound, "User not found");
+            return new ApiResponse(Status404NotFound, _localizer[nameof(AppStrings.UserNotFound)]);
 
         var roles = await _userManager.GetRolesAsync(user);
         var result = await _userManager.RemoveFromRolesAsync(user, roles);
@@ -191,14 +207,6 @@ public class AdminManager : IAdminManager
         result = await _userManager.AddToRolesAsync(user, updateUserDto.Roles!);
         return !result.Succeeded
             ? new ApiResponse(Status400BadRequest, result.GetErrors())
-            : new ApiResponse(Status200OK, "User roles updated");
-
-    }
-    public string GetUserLogin()
-    {
-        if (_httpContextAccessor.HttpContext is null)
-            return "";
-        var userName = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
-        return string.IsNullOrEmpty(userName) ? "" : userName.ToUpper();
+            : new ApiResponse(Status200OK, _localizer[nameof(AppStrings.UserRolesUpdated)]);
     }
 }

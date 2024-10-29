@@ -1,0 +1,147 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="InvalidData" xml:space="preserve">
+        <value>Dữ liệu không hợp lệ</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Chỉnh sửa</value>
+    </data>
+    <data name="InvalidRefreshToken" xml:space="preserve">
+        <value>Mã refresh token không hợp lệ</value>
+    </data>
+    <data name="LogoutSuccessful" xml:space="preserve">
+        <value>Đăng xuất thành công</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Xóa</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Hủy</value>
+    </data>
+    <data name="Confirm" xml:space="preserve">
+        <value>Xác nhận</value>
+    </data>
+    <data name="DeleteAccount" xml:space="preserve">
+        <value>Xóa tài khoản</value>
+    </data>
+    <data name="DeleteProduct" xml:space="preserve">
+        <value>Xóa sản phẩm</value>
+    </data>
+    <data name="DeleteCategory" xml:space="preserve">
+        <value>Xóa danh mục sản phẩm</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Chi tiết</value>
+    </data>
+    <data name="InvalidToken" xml:space="preserve">
+        <value>Sai Token</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Thêm mới</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>Tất cả</value>
+    </data>
+    <data name="Back" xml:space="preserve">
+        <value>Trở lại</value>
+    </data>
+    <data name="Completed" xml:space="preserve">
+        <value>Hoàn tất</value>
+    </data>
+    <data name="LockedUser" xml:space="preserve">
+        <value>Tài khoản bị khóa</value>
+    </data>
+    <data name="LoginFailed" xml:space="preserve">
+        <value>Đăng nhập thất bại</value>
+    </data>
+    <data name="LoginSuccess" xml:space="preserve">
+        <value>Đăng nhập thành công</value>
+    </data>
+    <data name="TokenRefreshed" xml:space="preserve">
+        <value>Tạo token mới thành công</value>
+    </data>
+    <data name="TwoFactorAuthenticationRequired" xml:space="preserve">
+        <value>Yêu cầu xác thực hai yếu tố</value>
+    </data>
+    <data name="EmailNotConfirmed" xml:space="preserve">
+        <value>Email chưa được xác nhận</value>
+    </data>
+    <data name="UsernameAndPasswordAreRequired" xml:space="preserve">
+        <value>Yêu cầu tên người dùng và mật khẩu</value>
+    </data>
+    <data name="UserAlreadyExists" xml:space="preserve">
+        <value>Người dùng đã tồn tại</value>
+    </data>
+    <data name="UserRegisteredSuccessfully" xml:space="preserve">
+        <value>Đăng ký người dùng thành công</value>
+    </data>
+    <data name="UserDoesntExist" xml:space="preserve">
+        <value>Người dùng không tồn tại</value>
+    </data>
+    <data name="EmailVerificationSuccessful" xml:space="preserve">
+        <value>Xác minh email thành công</value>
+    </data>
+    <data name="OperationFailed" xml:space="preserve">
+        <value>Thao tác thất bại</value>
+    </data>
+    <data name="OperationSuccessful" xml:space="preserve">
+        <value>Thao tác thành công</value>
+    </data>
+    <data name="UsersFetched" xml:space="preserve">
+        <value>{0} người dùng đã được tìm thấy.</value>
+    </data>
+    <data name="PermissionsListFetched" xml:space="preserve">
+        <value>Danh sách quyền đã được lấy</value>
+    </data>
+    <data name="RolesFetched" xml:space="preserve">
+        <value>{0} danh sách roles</value>
+    </data>
+    <data name="RoleFetched" xml:space="preserve">
+        <value>Vai trò đã được lấy</value>
+    </data>
+    <data name="RoleDeleted" xml:space="preserve">
+        <value>Vai trò {0} đã bị xóa</value>
+    </data>
+    <data name="RoleInUseWarning" xml:space="preserve">
+        <value>Vai trò đang được sử dụng</value>
+    </data>
+    <data name="RoleCannotDeleted" xml:space="preserve">
+        <value>Vai trò {0} không thể xóa</value>
+    </data>
+    <data name="RoleAlreadyExists" xml:space="preserve">
+        <value>Vai trò {0} đã tồn tại</value>
+    </data>
+    <data name="RoleCreated" xml:space="preserve">
+        <value>Vai trò {0} tạo thành công</value>
+    </data>
+    <data name="RoleUpdated" xml:space="preserve">
+        <value>Vai trò {0} cập nhật thành công</value>
+    </data>
+    <data name="RoleNotFound" xml:space="preserve">
+        <value>Vai trò {0} không tồn tại</value>
+    </data>
+    <data name="RoleCannotBeEdited" xml:space="preserve">
+        <value>Vai trò {0} không thể được chỉnh sửa</value>
+    </data>
+    <data name="UserNotFound" xml:space="preserve">
+        <value>Không tìm thấy người dùng</value>
+    </data>
+    <data name="UserRolesUpdated" xml:space="preserve">
+        <value>Cập nhật vai trò người dùng</value>
+    </data>
+</root>

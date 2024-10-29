@@ -1,7 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization.Routing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
+using SolidTemplate.API.Middleware;
 using SolidTemplate.Application;
 using SolidTemplate.Constants.AuthorizationDefinitions;
 using SolidTemplate.Constants.ConfigurationOptions;
@@ -9,6 +13,9 @@ using SolidTemplate.Domain.DataModels;
 using SolidTemplate.Infrastructure;
 using SolidTemplate.Infrastructure.Storage;
 using SolidTemplate.Persistence;
+using SolidTemplate.Shared;
+using SolidTemplate.Shared.DTOs;
+using SolidTemplate.Shared.Resources;
 namespace SolidTemplate.API;
 
 public class Program
@@ -71,9 +78,52 @@ public class Program
             options.Lockout.MaxFailedAccessAttempts = 10;
             options.Lockout.AllowedForNewUsers = true;
         });
+        builder.Services.ConfigureHttpJsonOptions(options
+            => options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonContext.Default));
+
+        builder.Services
+            .AddControllers()
+            .AddJsonOptions(options =>
+                options.JsonSerializerOptions.TypeInfoResolverChain.Add(AppJsonContext.Default))
+            .AddOData(options => options.EnableQueryFeatures())
+            .AddDataAnnotationsLocalization(options =>
+                options.DataAnnotationLocalizerProvider = StringLocalizerProvider.ProvideLocalizer)
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(e => e.Value!.Errors.Count > 0)
+                        .Select(e => new
+                        {
+                            e.Key, Errors = e.Value!.Errors.Select(err => err.ErrorMessage).ToArray()
+                        });
+
+                    return new BadRequestObjectResult(new
+                    {
+                        Errors = errors
+                    });
+                };
+            });
 
         var app = builder.Build();
-
+        if (CultureInfoManager.MultilingualEnabled)
+        {
+            var supportedCultures = CultureInfoManager.SupportedCultures.Select(sc => sc.Culture).ToArray();
+            var options = new RequestLocalizationOptions
+            {
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures,
+                ApplyCurrentCultureToResponseHeaders = true
+            };
+            options.SetDefaultCulture(CultureInfoManager.DefaultCulture.Name);
+            options.RequestCultureProviders.Insert(1, new RouteDataRequestCultureProvider
+            {
+                Options = options
+            });
+            app.UseRequestLocalization(options);
+        }
+        app.UseMiddleware<LocalizationMiddleware>();
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -88,9 +138,15 @@ public class Program
         }
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
+
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseForwardedHeaders();
+
+        app.UseExceptionHandler("/", true);
 
         app.Run();
     }

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using SolidTemplate.Application.Managers;
 using SolidTemplate.Domain.Common;
-using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Shared.DTOs.UserDto;
+using SolidTemplate.Shared.Resources;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace SolidTemplate.API.Controllers;
@@ -12,9 +14,11 @@ namespace SolidTemplate.API.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountManager _accountManager;
-    public AccountController(IAccountManager accountManager)
+    private readonly IStringLocalizer<AppStrings> _localizer;
+    public AccountController(IAccountManager accountManager, IStringLocalizer<AppStrings> localizer)
     {
         _accountManager = accountManager;
+        _localizer = localizer;
     }
 
     [HttpPost("login")]
@@ -23,7 +27,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(Status401Unauthorized)]
     public async Task<ApiResponse> Login(LoginRequest parameters) => ModelState.IsValid
         ? await _accountManager.Login(parameters)
-        : new ApiResponse(Status400BadRequest, "InvalidData");
+        : new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.InvalidData)]);
 
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
@@ -38,7 +42,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ApiResponse> Register(RegisterRequest parameters) => ModelState.IsValid
         ? await _accountManager.Register(parameters)
-        : new ApiResponse(Status400BadRequest, "InvalidData");
+        : new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.InvalidData)]);
 
     [HttpPost("confirm-email")]
     [AllowAnonymous]
@@ -46,7 +50,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ApiResponse> ConfirmEmail(ConfirmEmailDto parameters) => ModelState.IsValid
         ? await _accountManager.ConfirmEmail(parameters)
-        : new ApiResponse(Status400BadRequest, "InvalidData");
+        : new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.InvalidData)]);
 
     [HttpPost("update-user")]
     [Authorize]
@@ -54,7 +58,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ApiResponse> AdminUpdateUser(UserDto userDto) => ModelState.IsValid
         ? await _accountManager.AdminUpdateUser(userDto)
-        : new ApiResponse(Status400BadRequest, "InvalidData");
+        : new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.InvalidData)]);
 
     [HttpPost("reset-user-password")]
     [Authorize]
@@ -62,5 +66,5 @@ public class AccountController : ControllerBase
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ApiResponse> AdminResetUserPassword(ChangePasswordDto changePasswordDto) => ModelState.IsValid
         ? await _accountManager.AdminResetUserPasswordAsync(changePasswordDto, User)
-        : new ApiResponse(Status400BadRequest, "InvalidData");
+        : new ApiResponse(Status400BadRequest, _localizer[nameof(AppStrings.InvalidData)]);
 }

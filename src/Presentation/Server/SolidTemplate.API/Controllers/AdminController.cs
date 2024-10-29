@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolidTemplate.Application.Managers;
 using SolidTemplate.Domain.Common;
-using SolidTemplate.Share.DTOs.AdminDto;
-using SolidTemplate.Share.DTOs.UserDto;
-using SolidTemplate.Share.Permission;
+using SolidTemplate.Shared.DTOs.AdminDto;
+using SolidTemplate.Shared.DTOs.UserDto;
+using SolidTemplate.Shared.Permission;
 namespace SolidTemplate.API.Controllers;
 
 [Route("api/[controller]/[action]")]

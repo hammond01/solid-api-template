@@ -1,5 +1,5 @@
 ﻿using SolidTemplate.Infrastructure.DateTimes;
-using SolidTemplate.Share.DateTimes;
+using SolidTemplate.Shared.DateTimes;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 

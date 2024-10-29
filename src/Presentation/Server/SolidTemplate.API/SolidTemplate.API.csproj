@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+    <PackageReference Include="Microsoft.AspNetCore.OData"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,31 +21,6 @@
     <ProjectReference Include="..\..\..\Application\SolidTemplate.Application\SolidTemplate.Application.csproj"/>
     <ProjectReference Include="..\..\..\CrossCuttingConcerns\SolidTemplate.Constants\SolidTemplate.Constants.csproj"/>
     <ProjectReference Include="..\..\..\Infrastructure\SolidTemplate.Persistence\SolidTemplate.Persistence.csproj"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\AppStrings.resx">
-      <Generator>MSBuild:Compile</Generator>
-      <LastGenOutput>Resources\AppStrings.Designer.cs</LastGenOutput>
-      <StronglyTypedFileName>$(IntermediateOutputPath)\AppStrings.Designer.cs</StronglyTypedFileName>
-      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
-      <StronglyTypedNamespace>SolidTemplate.API.Resources</StronglyTypedNamespace>
-      <StronglyTypedClassName>AppStrings</StronglyTypedClassName>
-      <PublicClass>true</PublicClass>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\IdentityStrings.resx">
-      <Generator>MSBuild:Compile</Generator>
-      <LastGenOutput>Resources\IdentityStrings.Designer.cs</LastGenOutput>
-      <StronglyTypedFileName>$(IntermediateOutputPath)\IdentityStrings.Designer.cs</StronglyTypedFileName>
-      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
-      <StronglyTypedNamespace>SolidTemplate.API.Resources</StronglyTypedNamespace>
-      <StronglyTypedClassName>IdentityStrings</StronglyTypedClassName>
-      <PublicClass>true</PublicClass>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Middleware\"/>
   </ItemGroup>
 
 </Project>

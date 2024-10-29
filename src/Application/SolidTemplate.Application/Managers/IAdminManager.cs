@@ -1,6 +1,6 @@
 ﻿using SolidTemplate.Domain.Common;
-using SolidTemplate.Share.DTOs.AdminDto;
-using SolidTemplate.Share.DTOs.UserDto;
+using SolidTemplate.Shared.DTOs.AdminDto;
+using SolidTemplate.Shared.DTOs.UserDto;
 namespace SolidTemplate.Application.Managers;
 
 public interface IAdminManager
